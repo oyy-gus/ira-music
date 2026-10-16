@@ -75,7 +75,7 @@
 ### 1. Clone Repository
 ```bash
 git clone https://github.com/oyy-gus/ira-music.git
-cd bot
+cd ira-music
 ```
 
 ### 2. Install Dependencies
