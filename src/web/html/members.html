@@ -1,0 +1,84 @@
+<div class="page">
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div>
+      <h1 class="page-title"><span>Community Members</span></h1>
+      <p class="page-sub">Track active members, weekly OwO requirements, and Atlantis of the Week (AOTW).</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.06);padding:6px 14px;border-radius:12px;border:1px solid var(--border);font-size:.85rem;font-weight:600;color:var(--muted)">
+        <i class="fa-solid fa-calendar-week" style="color:var(--primary);margin-right:6px"></i> {{WEEK_DATE}}
+      </div>
+      <div style="background:rgba(59,130,246,0.12);padding:6px 14px;border-radius:12px;border:1px solid rgba(59,130,246,0.3);font-size:.82rem;font-weight:600;color:#60A5FA;display:inline-flex;align-items:center;gap:6px">
+        <i class="fa-solid fa-clock-rotate-left"></i> Auto-Resets Weekly (Sunday 00:00 UTC)
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVER SCOPE SELECTOR -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:10px 16px;border-radius:14px;border:1px solid var(--border);flex-wrap:wrap">
+    <span style="font-size:.85rem;color:var(--muted);font-weight:600"><i class="fa-solid fa-earth-americas" style="color:var(--primary);margin-right:6px"></i> Server Filter:</span>
+    <select id="serverScopeSelect" onchange="switchScope(this.value)" style="background:rgba(16,20,44,0.9);color:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:.85rem;cursor:pointer;outline:none;font-weight:600">
+      {{SERVER_OPTIONS}}
+    </select>
+    <span style="font-size:.8rem;color:var(--muted);margin-left:auto">Scope: <strong style="color:#fff">{{SCOPE_LABEL}}</strong></span>
+  </div>
+
+  <!-- AOTW TOP 3 PODIUM -->
+  <div style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <i class="fa-solid fa-crown" style="color:#F59E0B;font-size:1.2rem"></i>
+      <h2 style="font-family:var(--ff-title);font-size:1.25rem;font-weight:700">Possible Atlantis of the Week (AOTW)</h2>
+    </div>
+    <div class="aotw-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px">
+      {{AOTW_CARDS}}
+    </div>
+  </div>
+
+  <!-- ALL MEMBERS LIST -->
+  <div class="card" style="padding:20px;border-radius:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <h3 style="font-family:var(--ff-title);font-size:1.1rem;font-weight:700">All Members ({{TOTAL_MEMBERS}})</h3>
+      <div style="position:relative;width:240px;max-width:100%">
+        <input type="text" id="memberSearchInput" placeholder="Search members..." style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:8px 12px 8px 32px;color:#fff;font-size:.85rem" oninput="filterMembers()" />
+        <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.8rem;color:var(--muted)"></i>
+      </div>
+    </div>
+
+    <div class="tbl-container">
+      <table class="tbl" id="membersTable">
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Role / Level</th>
+            <th>Requirement</th>
+            <th>OwOs This Week</th>
+            <th style="width:100px;text-align:right">Action</th>
+          </tr>
+        </thead>
+        <tbody id="membersTableBody">
+          {{MEMBER_ROWS}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchScope(guildId) {
+  if (guildId === 'all') {
+    window.location.href = '/members';
+  } else {
+    window.location.href = '/members?guildId=' + encodeURIComponent(guildId);
+  }
+}
+
+
+function filterMembers() {
+  const query = (document.getElementById('memberSearchInput')?.value || '').toLowerCase();
+  const rows = document.querySelectorAll('#membersTableBody tr');
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+</script>

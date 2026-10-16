@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITLE}} — {{BOT_NAME}}</title>
+  <meta name="description" content="{{META_DESC}}" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{BOT_AVATAR}}" />
+  <link rel="apple-touch-icon" href="{{BOT_AVATAR}}" />
+
+  <!-- Open Graph / Discord Embed Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{{TITLE}} — {{BOT_NAME}}" />
+  <meta property="og:description" content="{{META_DESC}}" />
+  <meta property="og:image" content="{{BOT_AVATAR}}" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:site_name" content="{{BOT_NAME}}" />
+  <meta name="theme-color" content="#5865F2" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{TITLE}} — {{BOT_NAME}}" />
+  <meta name="twitter:description" content="{{META_DESC}}" />
+  <meta name="twitter:image" content="{{BOT_AVATAR}}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css?v=2.0.0">
+</head>
+<body>
+  <header class="header">
+    <div class="nav-wrapper">
+      <a href="/" class="brand">
+        <img src="{{BOT_AVATAR}}" alt="{{BOT_NAME}}" class="brand-avatar" />
+        <span class="brand-name">{{BOT_NAME}}</span>
+      </a>
+
+      <div style="display:flex;align-items:center;gap:12px">
+        {{USER_HTML}}
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Side Drawer Backdrop -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- Side Drawer Navigation -->
+  <aside class="drawer" id="navDrawer">
+    <div class="drawer-header">
+      <span class="drawer-title">Navigation</span>
+      <button class="drawer-close" id="drawerCloseBtn" aria-label="Close Menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <ul class="drawer-nav">
+      {{NAV_HTML}}
+    </ul>
+    <div class="drawer-footer">
+      <a href="{{INVITE_URL}}" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center">
+        <i class="fa-brands fa-discord"></i> Invite Bot
+      </a>
+    </div>
+  </aside>
+
+  <main>
+    {{BODY_CONTENT}}
+  </main>
+
+  <footer class="footer">
+    <p>&copy; {{YEAR}} {{BOT_NAME}}. All rights reserved.</p>
+    <p style="margin-top:6px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+      <a href="/terms" style="color:var(--muted)">Terms of Service</a> &bull;
+      <a href="/privacy" style="color:var(--muted)">Privacy Policy</a>
+    </p>
+  </footer>
+
+  <script src="/js/main.js?v=2.0.0"></script>
+</body>
+</html>

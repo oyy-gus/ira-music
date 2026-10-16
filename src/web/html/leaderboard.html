@@ -1,0 +1,47 @@
+<div class="page">
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div>
+      <h1 class="page-title"><span>Leaderboard</span></h1>
+      <p class="page-sub">Global rankings for top listeners and servers.</p>
+    </div>
+    <div style="display:flex;gap:10px;background:rgba(255,255,255,.05);padding:5px;border-radius:12px;border:1px solid var(--border)">
+      <button id="lb-tab-users" class="btn btn-primary btn-sm" onclick="switchLbTab('users')"><i class="fa-solid fa-users"></i> Top Users</button>
+      <button id="lb-tab-servers" class="btn btn-secondary btn-sm" onclick="switchLbTab('servers')"><i class="fa-solid fa-server"></i> Top Servers</button>
+    </div>
+  </div>
+
+  <!-- USERS TAB -->
+  <div id="sec-users" class="card" style="padding:0;overflow:hidden">
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:60px">#</th>
+          <th>User</th>
+          <th>XP</th>
+          <th>Listen Time</th>
+          <th>Songs Played</th>
+        </tr></thead>
+        <tbody>{{USER_ROWS}}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SERVERS TAB -->
+  <div id="sec-servers" class="card" style="padding:0;overflow:hidden;display:none">
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:60px">#</th>
+          <th>Server</th>
+          <th>Listen Time</th>
+          <th>Songs Played</th>
+          <th>Commands Used</th>
+        </tr></thead>
+        <tbody>{{SERVER_ROWS}}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:var(--muted);font-size:.78rem;margin-top:16px">Leaderboard updates live from the database.</p>
+</div>
+<script src="/js/leaderboard-page.js"></script>

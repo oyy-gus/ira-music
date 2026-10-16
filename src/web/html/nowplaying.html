@@ -1,0 +1,14 @@
+<div class="page">
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+    <div>
+      <h1 class="page-title"><span>Voice Activity &amp; Now Playing</span></h1>
+      <p class="page-sub">Live voice channels and active music streams across all servers.</p>
+    </div>
+    {{STREAMING_BADGE}}
+  </div>
+  <div class="grid-3" id="np-grid">{{NP_CARDS}}</div>
+  <p style="text-align:center;color:var(--muted);font-size:.78rem;margin-top:20px">
+    <i class="fa-solid fa-rotate"></i> Page auto-refreshes every 15 seconds
+  </p>
+</div>
+<script>setTimeout(()=>location.reload(),15000);</script>

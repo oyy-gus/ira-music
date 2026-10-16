@@ -1,0 +1,111 @@
+<div class="page">
+  <!-- Server Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:16px">
+      <a href="/servers" class="btn" style="background:rgba(255,255,255,.05);padding:10px 14px;border-radius:12px;color:var(--muted)" title="Back to Servers">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <img src="{{GUILD_ICON}}" alt="{{GUILD_NAME}}" style="width:56px;height:56px;border-radius:18px;object-fit:cover;border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 24px rgba(0,0,0,.3)">
+      <div>
+        <h1 style="font-family:var(--ff-title);font-size:1.5rem;font-weight:700;color:#fff;margin:0">{{GUILD_NAME}}</h1>
+        <p style="color:var(--muted);font-size:.85rem;margin:3px 0 0">
+          <i class="fa-solid fa-users" style="margin-right:4px"></i> {{MEMBER_COUNT}} members &bull; Server Management Hub
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:20px">
+    <h2 style="font-family:var(--ff-title);font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:6px">Server Modules & Features</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin:0">Choose a setting module below to customize your bot experience in {{GUILD_NAME}}.</p>
+  </div>
+
+  <!-- Modules Grid -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:20px">
+    
+    <!-- 1. Welcome & Leave Studio (ACTIVE) -->
+    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;padding:24px;border:1px solid rgba(139,92,246,.3);background:linear-gradient(145deg, rgba(20,24,45,.9), rgba(139,92,246,.08));position:relative;overflow:hidden">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg, #8B5CF6, #6366F1);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;box-shadow:0 6px 18px rgba(139,92,246,.4)">
+            <i class="fa-solid fa-door-open"></i>
+          </div>
+          <span style="background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:5px">
+            <i class="fa-solid fa-circle" style="font-size:.45rem"></i> Active
+          </span>
+        </div>
+        <h3 style="font-family:var(--ff-title);font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:8px">Welcome & Leave Studio</h3>
+        <p style="color:var(--muted);font-size:.85rem;line-height:1.5;margin-bottom:20px">
+          Configure custom canvas greeting cards, dynamic text captions, Discord embeds, channel missing permissions checker, and leave notifications.
+        </p>
+      </div>
+      <a href="/servers/{{GUILD_ID}}/welcome-leave" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;border-radius:12px;font-weight:600;display:flex;align-items:center;gap:8px">
+        <i class="fa-solid fa-sliders"></i> Configure Studio
+      </a>
+    </div>
+
+    <!-- 2. Community & OwO Leaderboard (ACTIVE) -->
+    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;padding:24px;border:1px solid rgba(59,130,246,.3);background:linear-gradient(145deg, rgba(20,24,45,.9), rgba(59,130,246,.08));position:relative;overflow:hidden">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg, #3B82F6, #1D4ED8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;box-shadow:0 6px 18px rgba(59,130,246,.4)">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <span style="background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:5px">
+            <i class="fa-solid fa-circle" style="font-size:.45rem"></i> Active
+          </span>
+        </div>
+        <h3 style="font-family:var(--ff-title);font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:8px">Community & OwO Leaderboard</h3>
+        <p style="color:var(--muted);font-size:.85rem;line-height:1.5;margin-bottom:20px">
+          Track weekly OwO activity, view AOTW (Atlantis of the Week) podium, monitor 50+ weekly requirements, and manage server week resets.
+        </p>
+      </div>
+      <a href="/members?guildId={{GUILD_ID}}" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;border-radius:12px;font-weight:600;display:flex;align-items:center;gap:8px">
+        <i class="fa-solid fa-trophy"></i> View Server Leaderboard
+      </a>
+    </div>
+
+    <!-- 2. Auto Moderation & Security (COMING SOON) -->
+    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;padding:24px;background:rgba(20,24,45,.6);border:1px solid rgba(255,255,255,.06)">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg, #06b6d4, #0284c7);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;opacity:.85">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <span style="background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1);font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:600">
+            <i class="fa-solid fa-clock" style="margin-right:4px"></i> Coming Soon
+          </span>
+        </div>
+        <h3 style="font-family:var(--ff-title);font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:8px">Auto Moderation & Security</h3>
+        <p style="color:var(--muted);font-size:.85rem;line-height:1.5;margin-bottom:20px">
+          Automated anti-spam, anti-invite link protection, mass mention shields, offensive word filters, and audit action logs.
+        </p>
+      </div>
+      <button type="button" disabled class="btn" style="width:100%;justify-content:center;padding:12px;border-radius:12px;font-weight:600;opacity:.5;cursor:not-allowed;background:rgba(255,255,255,.05);color:var(--muted)">
+        <i class="fa-solid fa-lock" style="margin-right:6px"></i> Locked
+      </button>
+    </div>
+
+    <!-- 3. Reaction Roles & Menus (COMING SOON) -->
+    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;padding:24px;background:rgba(20,24,45,.6);border:1px solid rgba(255,255,255,.06)">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg, #10b981, #059669);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;opacity:.85">
+            <i class="fa-solid fa-tags"></i>
+          </div>
+          <span style="background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1);font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:600">
+            <i class="fa-solid fa-clock" style="margin-right:4px"></i> Coming Soon
+          </span>
+        </div>
+        <h3 style="font-family:var(--ff-title);font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:8px">Reaction Roles & Menus</h3>
+        <p style="color:var(--muted);font-size:.85rem;line-height:1.5;margin-bottom:20px">
+          Interactive button and select-menu role self-assignment, welcome auto-roles, and verification gates for new members.
+        </p>
+      </div>
+      <button type="button" disabled class="btn" style="width:100%;justify-content:center;padding:12px;border-radius:12px;font-weight:600;opacity:.5;cursor:not-allowed;background:rgba(255,255,255,.05);color:var(--muted)">
+        <i class="fa-solid fa-lock" style="margin-right:6px"></i> Locked
+      </button>
+    </div>
+
+  </div>
+</div>

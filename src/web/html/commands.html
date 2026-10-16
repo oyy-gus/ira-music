@@ -1,0 +1,20 @@
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Bot <span>Commands</span></h1>
+    <p class="page-sub">Prefix: <code style="background:rgba(255,255,255,.08);padding:2px 8px;border-radius:6px">{{PREFIX}}</code> &nbsp;•&nbsp; Slash commands also supported</p>
+  </div>
+  <div class="cmd-filter">
+    <div class="search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input class="cmd-search" id="cmd-search" type="text" placeholder="Search commands..." oninput="doFilter()" />
+    </div>
+    <div class="cmd-filter-select-wrap">
+      <select id="cmd-category-select" class="form-select" onchange="onCategoryChange(this.value)">
+        <option value="all">All Categories</option>
+      </select>
+    </div>
+  </div>
+  <div class="grid-3" id="cmd-grid" style="gap:14px"></div>
+  <div class="empty" id="cmd-empty" style="display:none"><i class="fa-solid fa-magnifying-glass"></i><p>No commands match your search.</p></div>
+</div>
+<script src="/js/commands-page.js?v=2.0.0"></script>

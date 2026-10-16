@@ -1,0 +1,585 @@
+<style>
+/* ===== Greeting Studio: mobile fix (self-contained) ===== */
+.page { max-width: 100%; overflow-x: hidden; }
+.page * { min-width: 0; box-sizing: border-box; }
+.page img { max-width: 100%; }
+
+.studio-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+/* tombol placeholder */
+.ph-btn {
+  background: rgba(139,92,246,.15); color: var(--primary);
+  border: 1px solid rgba(139,92,246,.3); border-radius: 6px;
+  padding: 3px 8px; font-size: .75rem; font-weight: 600; cursor: pointer;
+}
+.ph-btn.sm { border-radius: 4px; padding: 2px 6px; font-size: .7rem; }
+
+@media (max-width: 900px) {
+  .studio-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .studio-preview-card { position: static !important; }
+
+  /* grid inline 2 & 3 kolom jadi 1 kolom */
+  .page [style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .page h1 { font-size: 1.1rem !important; word-break: break-word; }
+  .page .card { padding: 16px; }
+  .page .tab-btn { white-space: nowrap; padding: 10px 16px !important; }
+}
+
+@media (max-width: 480px) {
+  .delivery-format-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .delivery-format-group .mode-btn { flex: 1 1 100%; }
+  .page [style*="grid-template-columns:repeat(auto-fill,minmax(110px"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+</style>
+
+<div class="page">
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;flex:1">
+      <a href="/servers/{{GUILD_ID}}" class="btn" style="background:rgba(255,255,255,.05);padding:10px 14px;border-radius:12px;color:var(--muted)" title="Back to Server Modules"><i class="fa-solid fa-arrow-left"></i></a>
+      <img src="{{GUILD_ICON}}" alt="{{GUILD_NAME}}" style="width:52px;height:52px;border-radius:16px;object-fit:cover;border:1px solid rgba(255,255,255,.1);flex-shrink:0">
+      <div style="min-width:0;flex:1 1 180px">
+        <h1 style="font-family:var(--ff-title);font-size:1.4rem;font-weight:700;color:#fff;margin:0;word-break:break-word">{{GUILD_NAME}}</h1>
+        <p style="color:var(--muted);font-size:.85rem;margin:2px 0 0">Server Settings &bull; Welcome & Leave Studio</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode Tabs -->
+  <div style="display:flex;gap:12px;margin-bottom:24px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:14px;overflow-x:auto">
+    <button class="tab-btn tab-btn-mode active" id="tab-btn-welcome" data-tab="welcome" style="padding:10px 22px;border-radius:10px;background:var(--primary);color:#fff;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px">
+      <i class="fa-solid fa-door-open"></i> Welcome Config
+    </button>
+    <button class="tab-btn tab-btn-mode" id="tab-btn-leave" data-tab="leave" style="padding:10px 22px;border-radius:10px;background:rgba(255,255,255,.05);color:var(--muted);font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px">
+      <i class="fa-solid fa-door-closed"></i> Leave Config
+    </button>
+  </div>
+
+  <div id="toast" style="display:none;padding:12px 20px;border-radius:10px;margin-bottom:20px;font-weight:600;font-size:.9rem"></div>
+
+  <!-- Main Grid Layout -->
+  <div class="studio-grid">
+    <!-- LEFT: Live Preview & Master Controls -->
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card studio-preview-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px">
+          <h3 style="font-family:var(--ff-title);font-size:1.1rem;font-weight:700;margin:0;display:flex;align-items:center;gap:8px">
+            <i class="fa-solid fa-eye" style="color:var(--primary)"></i> Live Preview
+          </h3>
+          <span style="font-size:.75rem;background:rgba(139,92,246,.15);color:var(--primary);padding:4px 10px;border-radius:20px;font-weight:600;white-space:nowrap" id="preview-mode-badge">Canvas Card</span>
+        </div>
+
+        <!-- Preview Box Container -->
+        <div style="background:#05070d;border-radius:14px;padding:16px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+
+          <!-- 1. Standalone Canvas Card -->
+          <div id="preview-standalone-box" style="display:none;width:100%;max-width:540px;background:#2b2d31;border-radius:8px;padding:14px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <img id="standalone-preview-author-icon" src="https://cdn.discordapp.com/embed/avatars/0.png" style="width:36px;height:36px;border-radius:50%">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span id="standalone-preview-author-name" style="font-weight:700;font-size:.9rem;color:#fff">Bot Name</span>
+                  <span style="font-size:.65rem;background:#5865f2;color:#fff;padding:1px 4px;border-radius:3px;font-weight:600">BOT</span>
+                </div>
+                <div style="font-size:.7rem;color:#949ba4">Today at 12:00 PM</div>
+              </div>
+            </div>
+            <div id="standalone-preview-text" style="font-size:.9rem;color:#dbdee1;line-height:1.4;margin-bottom:10px;white-space:pre-wrap;word-break:break-word"></div>
+            <div style="margin-top:6px">
+              <img id="preview-img" src="" alt="Greeting Card Preview" style="width:100%;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.4);display:none">
+            </div>
+          </div>
+
+          <!-- 2. Custom Embed -->
+          <div id="preview-embed-box" style="display:none;width:100%;max-width:540px;background:#2b2d31;border-radius:8px;padding:14px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <img id="emb-mock-author-icon" src="https://cdn.discordapp.com/embed/avatars/0.png" style="width:36px;height:36px;border-radius:50%">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span id="emb-mock-author-name" style="font-weight:700;font-size:.9rem;color:#fff">Bot Name</span>
+                  <span style="font-size:.65rem;background:#5865f2;color:#fff;padding:1px 4px;border-radius:3px;font-weight:600">BOT</span>
+                </div>
+                <div style="font-size:.7rem;color:#949ba4">Today at 12:00 PM</div>
+              </div>
+            </div>
+            <div id="emb-preview-caption" style="font-size:.9rem;color:#dbdee1;line-height:1.4;margin-bottom:10px;white-space:pre-wrap;word-break:break-word;display:none"></div>
+
+            <div id="emb-inner-container" style="background:#1e1f22;border-radius:6px;border-left:4px solid #8B5CF6;padding:12px">
+              <div id="emb-preview-author" style="display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#f2f3f5;margin-bottom:6px">
+                <img id="emb-preview-author-icon" src="https://cdn.discordapp.com/embed/avatars/0.png" style="width:20px;height:20px;border-radius:50%">
+                <span id="emb-preview-author-text">Author Name</span>
+              </div>
+              <div id="emb-preview-title" style="font-weight:700;font-size:1rem;color:#fff;margin-bottom:6px;word-break:break-word">Embed Title</div>
+              <div id="emb-preview-desc" style="font-size:.85rem;color:#dbdee1;line-height:1.4;margin-bottom:10px;white-space:pre-wrap;word-break:break-word">Embed Description</div>
+
+              <div id="emb-preview-image-wrap" style="margin-top:10px">
+                <img id="emb-preview-img" src="" style="width:100%;border-radius:6px;display:none">
+              </div>
+
+              <div id="emb-preview-footer" style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:#949ba4;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)">
+                <img id="emb-preview-footer-icon" src="{{GUILD_ICON}}" style="width:16px;height:16px;border-radius:50%">
+                <span id="emb-preview-footer-text">Footer Text</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Plain Text -->
+          <div id="preview-text-box" style="display:none;width:100%;max-width:540px;background:#2b2d31;border-radius:8px;padding:14px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <img id="text-preview-author-icon" src="https://cdn.discordapp.com/embed/avatars/0.png" style="width:36px;height:36px;border-radius:50%">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span id="text-preview-author-name" style="font-weight:700;font-size:.9rem;color:#fff">Bot Name</span>
+                  <span style="font-size:.65rem;background:#5865f2;color:#fff;padding:1px 4px;border-radius:3px;font-weight:600">BOT</span>
+                </div>
+                <div style="font-size:.7rem;color:#949ba4">Today at 12:00 PM</div>
+              </div>
+            </div>
+            <div id="text-preview-body" style="font-size:.9rem;color:#dbdee1;line-height:1.4;white-space:pre-wrap;word-break:break-word">Message text content...</div>
+          </div>
+
+          <!-- Loader -->
+          <div id="preview-loader" style="color:rgba(255,255,255,.4);font-size:.85rem;display:flex;flex-direction:column;align-items:center;gap:10px">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:var(--primary)"></i>
+            <span>Generating live preview...</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+          <button id="btn-save" type="button" class="btn btn-primary" style="flex:1;min-width:140px;padding:12px;border-radius:10px;font-weight:600">
+            <i class="fa-solid fa-floppy-disk" style="margin-right:6px"></i> Save Changes
+          </button>
+          <button id="btn-refresh-preview" type="button" class="btn" style="background:rgba(255,255,255,.08);padding:12px 18px;border-radius:10px;font-weight:600">
+            <i class="fa-solid fa-rotate-right" style="margin-right:6px"></i> Refresh
+          </button>
+          <button id="btn-reset-style" type="button" class="btn" style="background:rgba(239,68,68,.1);color:#f87171;padding:12px 14px;border-radius:10px;font-weight:600" title="Reset visual style to default">
+            <i class="fa-solid fa-paint-roller" style="margin-right:6px"></i> Reset Style
+          </button>
+          <button id="btn-reset-full" type="button" class="btn" style="background:rgba(239,68,68,.15);color:#ef4444;padding:12px 14px;border-radius:10px;font-weight:600" title="Reset all settings to default">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Customization Panels -->
+    <div style="display:flex;flex-direction:column;gap:20px">
+
+      <!-- SECTION 1 -->
+      <div class="card">
+        <h3 style="font-family:var(--ff-title);font-size:1.05rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:#fff">
+          <i class="fa-solid fa-paper-plane" style="color:var(--primary)"></i> 1. Message Mode & Channel
+        </h3>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,.03);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.06)">
+              <span style="font-weight:600;font-size:.9rem">Enable System</span>
+              <input type="checkbox" id="cfg-enabled" style="width:20px;height:20px;accent-color:var(--primary)">
+            </label>
+          </div>
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,.03);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.06)">
+              <span style="font-weight:600;font-size:.9rem">Enable Canvas Card</span>
+              <input type="checkbox" id="cfg-useCard" style="width:20px;height:20px;accent-color:var(--primary)">
+            </label>
+          </div>
+        </div>
+
+        <div style="margin-bottom:18px">
+          <label style="font-weight:600;display:block;margin-bottom:8px;font-size:.85rem;color:var(--muted)">Delivery Format</label>
+          <div class="delivery-format-group">
+            <button type="button" id="mode-btn-standalone" data-mode="standalone" class="mode-btn mode-btn--active">
+              <i class="fa-solid fa-image"></i> Canvas Card
+            </button>
+            <button type="button" id="mode-btn-embed" data-mode="embed" class="mode-btn">
+              <i class="fa-solid fa-scroll"></i> Custom Embed
+            </button>
+            <button type="button" id="mode-btn-text" data-mode="text" class="mode-btn">
+              <i class="fa-solid fa-comment-dots"></i> Text Only
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label style="font-weight:600;display:block;margin-bottom:6px;font-size:.85rem;color:var(--muted)">Target Text Channel</label>
+          <select id="cfg-channelId" class="form-select" style="width:100%;padding:10px 14px;border-radius:8px;background-color:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.12);color-scheme:dark">
+            <option value="">-- Select Channel --</option>
+          </select>
+        </div>
+
+        <div id="channel-perm-box" style="display:none;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:12px;margin-bottom:16px">
+          <div style="font-weight:700;font-size:.85rem;color:#f87171;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <i class="fa-solid fa-triangle-exclamation"></i> Missing Bot Permissions in selected channel:
+          </div>
+          <div id="channel-perm-list" style="font-size:.8rem;color:#fca5a5;padding-left:20px;line-height:1.5"></div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:6px">Please grant the missing permissions in Discord channel settings to ensure delivery.</div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label style="font-weight:600;display:block;margin-bottom:8px;font-size:.85rem;color:var(--muted)">Message Content / Caption Settings</label>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;background:rgba(255,255,255,.03);padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:6px">
+                <i class="fa-solid fa-comment-dots" style="color:var(--primary)"></i> Send Caption Text
+              </span>
+              <input type="checkbox" id="cfg-messageEnabled" checked style="width:18px;height:18px;accent-color:var(--primary);flex-shrink:0">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;background:rgba(255,255,255,.03);padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:6px">
+                <i class="fa-solid fa-bell-slash" style="color:#f87171"></i> Disable Mention (No Ping)
+              </span>
+              <input type="checkbox" id="cfg-disableMention" style="width:18px;height:18px;accent-color:var(--primary);flex-shrink:0">
+            </label>
+          </div>
+
+          <textarea id="cfg-message" rows="3" placeholder="Enter message caption..." style="width:100%;padding:10px;border-radius:8px;background-color:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.12);font-family:inherit;color-scheme:dark"></textarea>
+
+          <div style="margin-top:8px">
+            <span style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:6px">Placeholders:</span>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <button type="button" class="ph-btn" data-insert="{user}">{user}</button>
+              <button type="button" class="ph-btn" data-insert="{username}">{username}</button>
+              <button type="button" class="ph-btn" data-insert="{displayName}">{displayName}</button>
+              <button type="button" class="ph-btn" data-insert="{server}">{server}</button>
+              <button type="button" class="ph-btn" data-insert="{memberCount}">{memberCount}</button>
+              <button type="button" class="ph-btn" data-insert="{memberNumber}">{memberNumber}</button>
+              <button type="button" class="ph-btn" data-insert="{userId}">{userId}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Custom Embed -->
+      <div class="card" id="panel-embed-customizer" style="display:none">
+        <h3 style="font-family:var(--ff-title);font-size:1.05rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:#fff">
+          <i class="fa-solid fa-boxes-packing" style="color:var(--secondary)"></i> 2. Custom Embed Customizer
+        </h3>
+
+        <div style="margin-bottom:14px">
+          <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Embed Title</label>
+          <input type="text" id="emb-title" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+            <button type="button" class="ph-btn sm" data-insert="{user}" data-target="emb-title">{user}</button>
+            <button type="button" class="ph-btn sm" data-insert="{displayName}" data-target="emb-title">{displayName}</button>
+            <button type="button" class="ph-btn sm" data-insert="{server}" data-target="emb-title">{server}</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px">
+          <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Embed Description</label>
+          <textarea id="emb-description" rows="3" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1);font-family:inherit"></textarea>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+            <button type="button" class="ph-btn sm" data-insert="{user}" data-target="emb-description">{user}</button>
+            <button type="button" class="ph-btn sm" data-insert="{displayName}" data-target="emb-description">{displayName}</button>
+            <button type="button" class="ph-btn sm" data-insert="{server}" data-target="emb-description">{server}</button>
+            <button type="button" class="ph-btn sm" data-insert="{memberCount}" data-target="emb-description">{memberCount}</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Embed Side Color</label>
+            <div class="color-input-group">
+              <input type="color" id="emb-color-picker" class="color-picker-input" value="#8B5CF6" title="Choose Embed Color">
+              <input type="text" id="emb-color" class="color-text-input" value="#8B5CF6" maxlength="7">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Embed Author Name</label>
+            <input type="text" id="emb-authorName" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Embed Footer Text</label>
+            <input type="text" id="emb-footerText" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+          </div>
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,.03);padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);margin-top:20px">
+              <span style="font-size:.8rem;font-weight:600">Embed Card Image</span>
+              <input type="checkbox" id="emb-showCanvasCard" checked style="accent-color:var(--primary);width:18px;height:18px">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Canvas Card -->
+      <div class="card" id="panel-canvas-customizer">
+        <h3 style="font-family:var(--ff-title);font-size:1.05rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:#fff">
+          <i class="fa-solid fa-paintbrush" style="color:var(--primary)"></i> 3. Canvas Card Visual Customizer
+        </h3>
+
+        <label style="font-weight:600;display:block;margin-bottom:8px;font-size:.85rem;color:var(--muted)">Built-in Themes</label>
+        <div id="bg-presets-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:16px">
+          <button type="button" data-preset="default" class="bg-preset-btn active" id="bgp-default" style="padding:10px;border-radius:8px;background:#181b33;color:#fff;border:2px solid var(--primary);cursor:pointer;font-size:.8rem;font-weight:600">Default</button>
+          <button type="button" data-preset="aurora" class="bg-preset-btn" id="bgp-aurora" style="padding:10px;border-radius:8px;background:#0c0721;color:#fff;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:.8rem;font-weight:600">Aurora</button>
+          <button type="button" data-preset="midnight" class="bg-preset-btn" id="bgp-midnight" style="padding:10px;border-radius:8px;background:#0f172a;color:#fff;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:.8rem;font-weight:600">Midnight</button>
+          <button type="button" data-preset="purple-glow" class="bg-preset-btn" id="bgp-purple-glow" style="padding:10px;border-radius:8px;background:#1e0136;color:#fff;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:.8rem;font-weight:600">Purple Glow</button>
+          <button type="button" data-preset="dark-waves" class="bg-preset-btn" id="bgp-dark-waves" style="padding:10px;border-radius:8px;background:#0b0f19;color:#fff;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:.8rem;font-weight:600">Dark Waves</button>
+          <button type="button" data-preset="abstract" class="bg-preset-btn" id="bgp-abstract" style="padding:10px;border-radius:8px;background:#180e29;color:#fff;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:.8rem;font-weight:600">Abstract</button>
+          <button type="button" data-preset="space" class="bg-preset-btn" id="bgp-space" style="padding:10px;border-radius:8px;background:#030712;color:#fff;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:.8rem;font-weight:600">Space</button>
+          <button type="button" data-preset="gradient" class="bg-preset-btn" id="bgp-gradient" style="padding:10px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-size:.8rem;font-weight:600">Gradient</button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.15);border-radius:10px;padding:16px;text-align:center;margin-bottom:16px">
+          <input type="file" id="bg-file-input" accept="image/png,image/jpeg,image/webp" style="display:none">
+          <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.6rem;color:var(--primary);margin-bottom:6px"></i>
+          <div style="font-size:.85rem;font-weight:600;margin-bottom:4px">Upload Custom Background</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">PNG, JPG, WEBP &bull; Max 5MB &bull; Max 3840x2160</div>
+          <button type="button" id="btn-choose-bg" class="btn" style="background:rgba(255,255,255,.1);padding:6px 16px;border-radius:8px;font-size:.8rem;font-weight:600">Choose File</button>
+          <div id="upload-status" style="font-size:.75rem;margin-top:6px"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Image Fit</label>
+            <select id="bg-fit" class="form-select" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+              <option value="cover">Cover (Fill)</option>
+              <option value="contain">Contain (Fit inside)</option>
+              <option value="stretch">Stretch</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Image Position</label>
+            <select id="bg-position" class="form-select" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+              <option value="center">Center</option>
+              <option value="top">Top</option>
+              <option value="bottom">Bottom</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:.8rem;color:var(--muted)">Overlay Opacity</span>
+              <span id="bg-opacity-val" style="font-size:.8rem;font-weight:600">50%</span>
+            </label>
+            <input type="range" id="bg-overlayOpacity" min="0" max="100" value="50" style="width:100%;accent-color:var(--primary)">
+          </div>
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:.8rem;color:var(--muted)">Overlay Color</span>
+            </label>
+            <div class="color-input-group">
+              <input type="color" id="bg-overlayColor-picker" class="color-picker-input" value="#000000" title="Choose Overlay Color">
+              <input type="text" id="bg-overlayColor" class="color-text-input" value="#000000" maxlength="7">
+            </div>
+          </div>
+        </div>
+
+        <label style="font-weight:600;display:block;margin-bottom:8px;font-size:.85rem;color:var(--muted)">Color Palette</label>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:18px">
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:4px;font-weight:600">Primary</label>
+            <div class="color-input-group">
+              <input type="color" id="clr-primary-picker" class="color-picker-input" value="#8B5CF6" title="Choose Primary Color">
+              <input type="text" id="clr-primary" class="color-text-input" value="#8B5CF6" maxlength="7">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:4px;font-weight:600">Secondary</label>
+            <div class="color-input-group">
+              <input type="color" id="clr-secondary-picker" class="color-picker-input" value="#3B82F6" title="Choose Secondary Color">
+              <input type="text" id="clr-secondary" class="color-text-input" value="#3B82F6" maxlength="7">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:4px;font-weight:600">Text</label>
+            <div class="color-input-group">
+              <input type="color" id="clr-text-picker" class="color-picker-input" value="#FFFFFF" title="Choose Text Color">
+              <input type="text" id="clr-text" class="color-text-input" value="#FFFFFF" maxlength="7">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:4px;font-weight:600">Subtext</label>
+            <div class="color-input-group">
+              <input type="color" id="clr-subtext-picker" class="color-picker-input" value="#9CA3AF" title="Choose Subtext Color">
+              <input type="text" id="clr-subtext" class="color-text-input" value="#9CA3AF" maxlength="7">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:4px;font-weight:600">Accent</label>
+            <div class="color-input-group">
+              <input type="color" id="clr-accent-picker" class="color-picker-input" value="#8B5CF6" title="Choose Accent Color">
+              <input type="text" id="clr-accent" class="color-text-input" value="#8B5CF6" maxlength="7">
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Heading Font</label>
+            <select id="fnt-heading" class="form-select" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+              <option value="Poppins">Poppins</option>
+              <option value="Inter">Inter</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Outfit">Outfit</option>
+              <option value="Segoe UI">Segoe UI</option>
+              <option value="Arial">Arial</option>
+              <option value="Sans-Serif">Sans-Serif (Default)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Body Font</label>
+            <select id="fnt-body" class="form-select" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+              <option value="Inter">Inter</option>
+              <option value="Poppins">Poppins</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Outfit">Outfit</option>
+              <option value="Segoe UI">Segoe UI</option>
+              <option value="Arial">Arial</option>
+              <option value="Sans-Serif">Sans-Serif (Default)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px">
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:.8rem;color:var(--muted)">Heading Size</span>
+              <span id="tpo-hsize-val" style="font-size:.8rem;font-weight:600">28px</span>
+            </label>
+            <input type="range" id="tpo-headingSize" min="18" max="44" value="28" style="width:100%;accent-color:var(--primary)">
+          </div>
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:.8rem;color:var(--muted)">Body Size</span>
+              <span id="tpo-bsize-val" style="font-size:.8rem;font-weight:600">16px</span>
+            </label>
+            <input type="range" id="tpo-bodySize" min="12" max="24" value="16" style="width:100%;accent-color:var(--primary)">
+          </div>
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Text Alignment</label>
+            <div style="display:flex;gap:4px">
+              <button type="button" id="align-left" class="btn btn-align" style="flex:1;padding:6px;background:rgba(255,255,255,.06);color:#fff;border-radius:6px;border:none"><i class="fa-solid fa-align-left"></i></button>
+              <button type="button" id="align-center" class="btn btn-align active" style="flex:1;padding:6px;background:var(--primary);color:#fff;border-radius:6px;border:none"><i class="fa-solid fa-align-center"></i></button>
+              <button type="button" id="align-right" class="btn btn-align" style="flex:1;padding:6px;background:rgba(255,255,255,.06);color:#fff;border-radius:6px;border:none"><i class="fa-solid fa-align-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <label style="font-weight:600;display:block;margin-bottom:8px;font-size:.85rem;color:var(--muted)">Avatar & Frame Settings</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Avatar Shape</label>
+            <select id="avt-shape" class="form-select" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+              <option value="circle">Circle</option>
+              <option value="rounded">Rounded Rectangle</option>
+              <option value="square">Square</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Avatar Frame</label>
+            <select id="avt-frame" class="form-select" style="width:100%;padding:8px 12px;border-radius:8px;background:#0e1121;color:#fff;border:1px solid rgba(255,255,255,.1)">
+              <option value="ira">Ira (Signature)</option>
+              <option value="glow">Glow Aura</option>
+              <option value="ring">Single Ring</option>
+              <option value="double-ring">Double Ring</option>
+              <option value="classic">Classic Gold</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:.8rem;color:var(--muted)">Avatar Size</span>
+              <span id="avt-size-val" style="font-size:.8rem;font-weight:600">100px</span>
+            </label>
+            <input type="range" id="avt-size" min="60" max="160" value="100" style="width:100%;accent-color:var(--primary)">
+          </div>
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:.8rem;color:var(--muted)">Border Width</span>
+              <span id="avt-bwidth-val" style="font-size:.8rem;font-weight:600">4px</span>
+            </label>
+            <input type="range" id="avt-borderWidth" min="0" max="12" value="4" style="width:100%;accent-color:var(--primary)">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+          <div>
+            <label style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:4px">Border Color</label>
+            <div class="color-input-group">
+              <input type="color" id="avt-borderColor-picker" class="color-picker-input" value="#8B5CF6" title="Choose Border Color">
+              <input type="text" id="avt-borderColor" class="color-text-input" value="#8B5CF6" maxlength="7">
+            </div>
+          </div>
+          <div>
+            <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:.8rem;color:var(--muted)">Shadow Intensity</span>
+              <span id="avt-shadow-val" style="font-size:.8rem;font-weight:600">15</span>
+            </label>
+            <input type="range" id="avt-shadowIntensity" min="0" max="40" value="15" style="width:100%;accent-color:var(--primary)">
+          </div>
+        </div>
+
+        <label style="font-weight:600;display:block;margin-bottom:8px;font-size:.85rem;color:var(--muted)">Element Visibility</label>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px">
+          <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="vis-avatar" checked style="accent-color:var(--primary);width:18px;height:18px"> Avatar
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="vis-heading" checked style="accent-color:var(--primary);width:18px;height:18px"> Heading
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="vis-message" checked style="accent-color:var(--primary);width:18px;height:18px"> Message
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="vis-serverName" checked style="accent-color:var(--primary);width:18px;height:18px"> Server Name
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="vis-memberNumber" checked style="accent-color:var(--primary);width:18px;height:18px"> Member #
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="vis-memberCount" checked style="accent-color:var(--primary);width:18px;height:18px"> Member Count
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- RESET CONFIRMATION MODAL -->
+<div id="reset-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center">
+  <div class="card" style="max-width:440px;width:90%;padding:28px;text-align:center">
+    <i class="fa-solid fa-triangle-exclamation" style="font-size:2.8rem;color:#f87171;margin-bottom:16px"></i>
+    <h3 style="font-family:var(--ff-title);font-size:1.3rem;font-weight:700;margin-bottom:8px" id="reset-modal-title">Confirm Reset</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:24px" id="reset-modal-desc">Are you sure you want to reset settings to defaults?</p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button id="btn-modal-cancel" type="button" class="btn" style="background:rgba(255,255,255,.1);padding:10px 20px;border-radius:10px;font-weight:600">Cancel</button>
+      <button id="btn-modal-confirm" type="button" class="btn" style="background:#ef4444;color:#fff;padding:10px 20px;border-radius:10px;font-weight:600">Reset Now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.CURRENT_GUILD_ID = "{{GUILD_ID}}";
+  window.INITIAL_GREETING_CONFIG = {{GREETING_JSON}};
+  window.USER_DISPLAY_NAME = "{{USER_DISPLAY_NAME}}";
+  window.USER_NAME = "{{USER_NAME}}";
+  window.USER_AVATAR = "{{USER_AVATAR}}";
+  window.BOT_NAME = "{{BOT_NAME}}";
+  window.BOT_AVATAR = "{{BOT_AVATAR}}";
+</script>
+<script src="/js/greeting.js?v=2.0.1"></script>

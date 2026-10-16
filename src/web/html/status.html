@@ -1,0 +1,12 @@
+<div class="page">
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+    <div>
+      <h1 class="page-title">Lavalink <span>Node Cluster</span></h1>
+      <p class="page-sub">Real-time health monitoring of all {{TOTAL_NODES}} configured nodes.</p>
+    </div>
+    <span class="chip {{CLUSTER_STATUS_CHIP_CLASS}}" style="font-size:.85rem;padding:8px 16px">
+      <span class="dot"></span>&nbsp;{{ONLINE_NODES}}/{{TOTAL_NODES}} Online
+    </span>
+  </div>
+  <div class="grid-3" style="gap:20px">{{NODE_CARDS}}</div>
+</div>

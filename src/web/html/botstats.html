@@ -1,0 +1,34 @@
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Bot <span>Statistics &amp; System Health</span></h1>
+    <p class="page-sub">Low-level process memory, Node.js runtime, and failover engine metrics.</p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:28px">
+    <div class="card">
+      <h3 style="font-family:var(--ff-title);font-size:1.05rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-microchip" style="color:var(--primary)"></i>Process Memory</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:14px;text-align:center"><div style="font-family:var(--ff-title);font-size:1.3rem;font-weight:700">{{RSS_MB}} MB</div><div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px">RSS Memory</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:14px;text-align:center"><div style="font-family:var(--ff-title);font-size:1.3rem;font-weight:700">{{HEAP_MB}} MB</div><div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px">Heap Used</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:14px;text-align:center"><div style="font-family:var(--ff-title);font-size:1.3rem;font-weight:700">{{HEAP_TOTAL_MB}} MB</div><div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px">Heap Total</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-family:var(--ff-title);font-size:1.05rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-clock" style="color:var(--secondary)"></i>Runtime</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        {{RUNTIME_CARDS}}
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:28px">
+    <h3 style="font-family:var(--ff-title);font-size:1.05rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-network-wired" style="color:var(--accent)"></i>Lavalink Cluster Summary</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+      {{CLUSTER_SUMMARY_CARDS}}
+    </div>
+  </div>
+
+  {{FAILOVER_METRICS_SECTION}}
+</div>
+<script>setTimeout(()=>location.reload(),15000);</script>
